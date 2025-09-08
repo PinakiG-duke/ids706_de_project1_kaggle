@@ -6,6 +6,16 @@ __pycache__/
 # C extensions
 *.so
 
+# --- project-specific ignores ---
+/.venv/          # your local venv (Python template may not catch .venv)
+/data/           # downloaded Kaggle files (keep data out of git)
+.ipynb_checkpoints/
+.env
+*.env
+.DS_Store
+Thumbs.db
+.kaggle/         # just in case—never commit credentials
+
 # Distribution / packaging
 .Python
 build/
