@@ -7,15 +7,21 @@ __pycache__/
 *.so
 
 # --- project-specific ignores ---
-/.venv/          # your local venv (Python template may not catch .venv)
-/data/           # downloaded Kaggle files (keep data out of git)
-!/data/Ecommerce_Consumer_Behavior_Analysis_Data.csv  # except this file for reproducibility
+/.venv/          # local venv
+/data/           # downloaded Kaggle files
 .ipynb_checkpoints/
 .env
 *.env
 .DS_Store
 Thumbs.db
-.kaggle/         # just in case—never commit credentials
+.kaggle/
+!data/.gitkeep
+/artifacts/*
+/data/processed/*
+!/data/processed/.gitkeep
+!/artifacts/.gitkeep
+
+
 
 # Distribution / packaging
 .Python
