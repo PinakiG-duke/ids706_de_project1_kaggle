@@ -68,7 +68,7 @@ def train_on_df(df: pd.DataFrame, write_artifacts: bool = True) -> dict:
             "Baseline model: Logistic Regression (numeric-only)\n"
             f"Rows: {len(df)}  |  Features used: {len(num_cols)}\n"
             "Target: Discount_Used (binary)\n"
-            "Train/Test: 90/10 (stratified)\n"
+            "Train/Test: 75/25 (stratified)\n"
             f"Accuracy: {acc:.3f}\n"
             f"Feature columns: {', '.join(num_cols)}\n"
         )
