@@ -1,0 +1,6 @@
+Baseline model: Logistic Regression (numeric-only)
+Rows: 1000  |  Features used: 13
+Target: Discount_Used (binary)
+Train/Test: 90/10 (stratified)
+Accuracy: 0.560
+Feature columns: Age, Frequency_of_Purchase, Brand_Loyalty, Product_Rating, Time_Spent_on_Product_Research(hours), Return_Rate, Customer_Satisfaction, Customer_Loyalty_Program_Member, Time_to_Decision, Purchase_Amount_clean, Purchase_Year, Purchase_Month, Purchase_Day

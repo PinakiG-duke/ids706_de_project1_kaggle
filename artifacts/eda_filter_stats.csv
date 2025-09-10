@@ -1,0 +1,2 @@
+percentile,threshold_value,rows_kept,rows_total,kept_share
+p90,91.19,900,1000,0.9

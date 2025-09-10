@@ -1,0 +1,41 @@
+<class 'pandas.core.frame.DataFrame'>
+RangeIndex: 1000 entries, 0 to 999
+Data columns (total 34 columns):
+ #   Column                                 Non-Null Count  Dtype         
+---  ------                                 --------------  -----         
+ 0   Customer_ID                            1000 non-null   object        
+ 1   Age                                    1000 non-null   int64         
+ 2   Gender                                 1000 non-null   object        
+ 3   Income_Level                           1000 non-null   object        
+ 4   Marital_Status                         1000 non-null   object        
+ 5   Education_Level                        1000 non-null   object        
+ 6   Occupation                             1000 non-null   object        
+ 7   Location                               1000 non-null   object        
+ 8   Purchase_Category                      1000 non-null   object        
+ 9   Purchase_Amount                        1000 non-null   object        
+ 10  Frequency_of_Purchase                  1000 non-null   int64         
+ 11  Purchase_Channel                       1000 non-null   object        
+ 12  Brand_Loyalty                          1000 non-null   int64         
+ 13  Product_Rating                         1000 non-null   int64         
+ 14  Time_Spent_on_Product_Research(hours)  1000 non-null   float64       
+ 15  Social_Media_Influence                 753 non-null    object        
+ 16  Discount_Sensitivity                   1000 non-null   object        
+ 17  Return_Rate                            1000 non-null   int64         
+ 18  Customer_Satisfaction                  1000 non-null   int64         
+ 19  Engagement_with_Ads                    744 non-null    object        
+ 20  Device_Used_for_Shopping               1000 non-null   object        
+ 21  Payment_Method                         1000 non-null   object        
+ 22  Time_of_Purchase                       1000 non-null   object        
+ 23  Discount_Used                          1000 non-null   bool          
+ 24  Customer_Loyalty_Program_Member        1000 non-null   bool          
+ 25  Purchase_Intent                        1000 non-null   object        
+ 26  Shipping_Preference                    1000 non-null   object        
+ 27  Time_to_Decision                       1000 non-null   int64         
+ 28  Purchase_Amount_clean                  1000 non-null   float64       
+ 29  Purchase_Date                          1000 non-null   datetime64[ns]
+ 30  Purchase_Year                          1000 non-null   int32         
+ 31  Purchase_Month                         1000 non-null   int32         
+ 32  Purchase_Day                           1000 non-null   int32         
+ 33  Purchase_DayOfWeek                     1000 non-null   object        
+dtypes: bool(2), datetime64[ns](1), float64(2), int32(3), int64(7), object(19)
+memory usage: 240.4+ KB
