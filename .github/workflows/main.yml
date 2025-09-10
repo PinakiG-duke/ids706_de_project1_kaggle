@@ -41,7 +41,7 @@ jobs:
 
       - name: Verify data file exists
         run: |
-          test -f "data/Ecommerce_Consumer_Behavior_Analysis_Data.csv" || (echo "Missing data CSV" && exit 1)
+          test -f "data/raw/Ecommerce_Consumer_Behavior_Analysis_Data.csv" || (echo "Missing data CSV" && exit 1)
 
       - name: Run EDA / Plot / Model
         run: |
