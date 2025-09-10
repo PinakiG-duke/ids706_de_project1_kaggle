@@ -20,7 +20,7 @@ Thumbs.db
 /data/processed/*
 !/data/processed/.gitkeep
 !/artifacts/.gitkeep
-
+!/artifacts/hist_purchase_amount_plot.png
 
 
 # Distribution / packaging
