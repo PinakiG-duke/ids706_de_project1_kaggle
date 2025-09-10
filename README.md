@@ -85,7 +85,7 @@ https://github.com/PinakiG-duke/ids706_de_project1_kaggle/tree/main/artifacts (S
 # Plot (one histogram)
 python -m src.plot
 # artifacts/hist_purchase_amount.png
-![Histogram of Purchase Amount](artifacts/hist_purchase_amount.png)
+![Histogram of Purchase Amount](artifacts/hist_purchase_amount_plot.png)
 
 # Model (baseline numeric-only)
 python -m src.model
