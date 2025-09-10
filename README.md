@@ -12,6 +12,7 @@ flowchart
   C --> E[Model (baseline)]
   B -->|writes| P[data/processed/*]
   C & D & E -->|write| F[artifacts/*]
+  
   **What each stage does in this version:**
   Ingest: read the committed CSV.
   Clean (src/data_clean.py):
@@ -51,7 +52,8 @@ README.md
 
 src/ as a package makes python -m src.<module> work everywhere, in dev and CI.
 data/ keeps a tiny CSV so the modules can be run without credentials.
-artifacts/ and data/processed/ are git-ignored to keep the repo small and clean.
+artifacts/ and data/processed/ are git-ignored to keep the repo small and clean. A set of outputs have been added to the artefacts folder for reference.
+https://github.com/PinakiG-duke/ids706_de_project1_kaggle/tree/main/artifacts
 Tests live under src/ only for this assignment to simplify grading; in production they’d move to tests/.
 
 **Branch Strategy (feature branches)**
@@ -78,10 +80,12 @@ python -m src.data_clean
 python -m src.eda
 # artifacts/eda_head.csv, eda_info.txt, eda_describe.csv, eda_missing.csv, eda_duplicates.txt,
 # eda_filter_stats.csv (p75 threshold) & eda_category_summary.csv
+https://github.com/PinakiG-duke/ids706_de_project1_kaggle/tree/main/artifacts (Sample outputs from a local run added for reference)
 
 # Plot (one histogram)
 python -m src.plot
 # artifacts/hist_purchase_amount.png
+![Histogram of Purchase Amount](artifacts/hist_purchase_amount.png)
 
 # Model (baseline numeric-only)
 python -m src.model
