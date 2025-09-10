@@ -55,7 +55,7 @@ def train_on_df(df: pd.DataFrame, write_artifacts: bool = True) -> dict:
 
     # Split dataset into test and train the model
     Xtr, Xte, ytr, yte = train_test_split(
-        X, y, test_size=0.10, random_state=42, stratify=y
+        X, y, test_size=0.25, random_state=42, stratify=y
     )
     clf = LogisticRegression(max_iter=1000)
     clf.fit(Xtr, ytr)
