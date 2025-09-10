@@ -1,0 +1,61 @@
+name: ci
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+
+  artifacts:
+    needs: test
+    if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' || github.base_ref == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+
+      - name: Verify data file exists
+        run: |
+          test -f "data/Ecommerce_Consumer_Behavior_Analysis_Data.csv" || (echo "Missing data CSV" && exit 1)
+
+      - name: Run EDA / Plot / Model
+        run: |
+          python -m src.eda
+          python -m src.plot
+          python -m src.model
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: analysis-artifacts
+          path: artifacts/**
+          if-no-files-found: warn
+
+      - name: Run tests
+        run: |
+          python -m pytest -q
