@@ -1,4 +1,4 @@
-[![CI](https://github.com/PinakiG-duke/ids706_de_project1_kaggle/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/PinakiG-duke/ids706_de_project1_kaggle/actions/workflows/ci.yml)
+[![ci](https://github.com/PinakiG-duke/ids706_de_project1_kaggle/actions/workflows/main.yml/badge.svg)](https://github.com/PinakiG-duke/ids706_de_project1_kaggle/actions/workflows/main.yml)
 
 # ids706_de_project1_kaggle
 Data Engineering multi-week assignment incorporating data import, data cleansing, exploratory analysis, predictive modelling, visualisation, and evaluation
