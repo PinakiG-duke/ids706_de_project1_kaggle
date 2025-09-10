@@ -16,7 +16,7 @@ ART = Path("artifacts"); ART.mkdir(parents=True, exist_ok=True)
 def make_histogram(csv_path: str = DEFAULT_CSV):
     df = load_and_clean(csv_path)
 
-    # Plot the cleaned amount; otherwise first numeric column
+    # Plots the cleaned amount; otherwise first numeric column
     col = "Purchase_Amount_clean" if "Purchase_Amount_clean" in df.columns else None
     if col is None:
         nums = df.select_dtypes(include=["number", "bool"]).columns.tolist()

@@ -1,5 +1,5 @@
 """
-DATA CLEANING
+Data Cleaning Module
 - Load a local CSV
 - Clean currency strings in Purchase_Amount to float (Purchase_Amount_clean)
 - Parse Time_of_Purchase when it contains a DATE (MM/DD/YYYY or MM-DD-YYYY)
@@ -59,7 +59,7 @@ def add_date_features(df: pd.DataFrame, date_col: str = "Purchase_Date") -> pd.D
         df["Purchase_DayOfWeek"] = dt.dt.day_name()
     return df
 
-# --------- main cleaning entrypoint ---------
+# --------- main cleaning module ---------
 
 def load_and_clean(csv_path: str | Path = DEFAULT_CSV, save_processed: bool = False) -> pd.DataFrame:
     """Load CSV and add cleaned columns; saves processed CSV """
