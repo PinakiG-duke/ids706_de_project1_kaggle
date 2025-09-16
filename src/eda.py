@@ -19,11 +19,13 @@ from .data_clean import load_and_clean, DEFAULT_CSV
 ART = Path("artifacts")
 ART.mkdir(parents=True, exist_ok=True)
 
+def ensure_dir(p: Path):
+    p.mkdir(parents=True, exist_ok=True)
 
 def high_value_filter(df: pd.DataFrame, col: str, q: float = 0.10):
     """Keep rows where col >= q-quantile ( q=0.10 keeps top 90%).
     This is a placeholder function which can be used to remove outliers from the data """
-    threshold = float(df[col].quantile(q))
+    threshold = float(df[col].quantile(q, interpolation="nearest"))
     return df[df[col] >= threshold], threshold
 
 
@@ -47,14 +49,17 @@ def summarize_by_category(df: pd.DataFrame) -> pd.DataFrame:
 
     out = (
         df.groupby("Purchase_Category", dropna=False)
-          .agg(**named_aggs)
-          .sort_values("n", ascending=False)
-          .round(2)
+          .agg(n=("Customer_ID", "size"),
+        avg_amount=("Purchase_Amount_clean", "mean"),
+        avg_satisfaction=("Customer_Satisfaction", "mean"),
+        discount_rate=("Discount_Used", "mean"),)
+          .reset_index()
     )
     return out
 
 
-def run_eda(csv_path: str = DEFAULT_CSV):
+def run_eda(csv_path: str | Path = None):
+    ensure_dir(ART)
     df = load_and_clean(csv_path)
 
     # 1) Head (preview rows)
