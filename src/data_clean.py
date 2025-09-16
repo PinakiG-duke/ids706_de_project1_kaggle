@@ -79,11 +79,16 @@ def add_date_features(df: pd.DataFrame, date_col: str = "Purchase_Date") -> pd.D
 
 # --------- main cleaning module ---------
 
-def load_and_clean(csv_path: str | Path = DEFAULT_CSV, save_processed: bool = False) -> pd.DataFrame:
-    """Load CSV and add cleaned columns; saves processed CSV """
-    p = Path(csv_path)
+def load_and_clean(csv_path: str | Path | None = None,
+                   save_processed: bool = False) -> pd.DataFrame:
+    """
+    Load CSV and add cleaned columns; optionally save processed CSV.
+    If csv_path is None, use DEFAULT_CSV.
+    """
+    p = Path(csv_path) if csv_path is not None else DEFAULT_CSV
     if not p.exists():
         raise FileNotFoundError(f"CSV not found: {p.resolve()}")
+
     df = pd.read_csv(p)
 
     # 1)Clean Purchase_Amount to float

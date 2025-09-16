@@ -60,6 +60,8 @@ def summarize_by_category(df: pd.DataFrame) -> pd.DataFrame:
 
 def run_eda(csv_path: str | Path = None):
     ensure_dir(ART)
+    if csv_path is None:
+        csv_path = DEFAULT_CSV
     df = load_and_clean(csv_path)
 
     # 1) Head (preview rows)
@@ -103,4 +105,8 @@ def run_eda(csv_path: str | Path = None):
 
 
 if __name__ == "__main__":
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--csv", default=None, help="Path to input CSV")
+    args = ap.parse_args()
     run_eda()

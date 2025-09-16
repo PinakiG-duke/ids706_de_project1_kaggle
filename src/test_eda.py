@@ -24,7 +24,7 @@ def test_run_eda_writes_artifacts(tmp_path, monkeypatch):
     # Redirect artifacts to a temp folder
     monkeypatch.setattr(eda_mod, "ART", tmp_path / "artifacts")
 
-    # Make a tiny CSV; run EDA end-to-end
+    # Makes a CSV; run EDA end-to-end
     csv = tmp_path / "mini.csv"
     pd.DataFrame({
         "Customer_ID":[1,2,3],
@@ -35,7 +35,7 @@ def test_run_eda_writes_artifacts(tmp_path, monkeypatch):
         "Discount_Used":[0,1,0],
     }).to_csv(csv, index=False)
 
-    # run_eda should accept a path (your module already exposes it)
+    # run_eda should accept a path
     eda_mod.run_eda(str(csv))
 
     must_exist = [
