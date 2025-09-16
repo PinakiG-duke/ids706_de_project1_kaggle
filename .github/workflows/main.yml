@@ -59,3 +59,24 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest -q
+    
+    
+  docker:
+    # build & run the container to prove containerization works
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Build image from .devcontainer/Dockerfile
+        uses: docker/build-push-action@v5
+        with:
+            context: .
+            file: .devcontainer/Dockerfile
+            tags: ids706-de:ci
+            load: true            # makes the image available to `docker run`
+
+      - name: Run tests inside the container
+        run: docker run --rm ids706-de:ci
+
