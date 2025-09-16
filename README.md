@@ -1,5 +1,6 @@
 [![ci](https://github.com/PinakiG-duke/ids706_de_project1_kaggle/actions/workflows/main.yml/badge.svg)](https://github.com/PinakiG-duke/ids706_de_project1_kaggle/actions/workflows/main.yml)
 
+
 # ids706_de_project1_kaggle
 Data Engineering multi-week assignment incorporating data import, data cleansing, exploratory analysis, predictive modelling, visualisation, and evaluation
 
@@ -128,3 +129,18 @@ python -m src.model
 
 # 4) run tests (this repo keeps tests under src/ for this assignment)
 python -m pytest -q src/test_cases.py
+
+**Updates for Week3 Assignments**
+
+1. 3 Unit Tests added: test_clean.py (Tests cleaning and type normalization), test_eda.py (filtering, grouping and a system test that writes artifacts) and test_model.py (tests both Happy Path and error path as well)
+2. All test cases have executed locally as expected <img width="416" height="66" alt="image" src="https://github.com/user-attachments/assets/ed6fe67b-8995-428e-abeb-93029e739d90" />
+
+
+3. Test jobs ran successfully under Github Actions <img width="935" height="353" alt="image" src="https://github.com/user-attachments/assets/2a937db3-2b1d-4d02-b504-8027fe4251c3" />
+
+4. .Devcontainer has both the Dockerfile and devcontainer.json and CI job that builds the image and runs tests inside the container
+   <img width="938" height="383" alt="image" src="https://github.com/user-attachments/assets/df71418c-f018-4d6b-ac32-e0559ce44cae" />
+
+
+
+
