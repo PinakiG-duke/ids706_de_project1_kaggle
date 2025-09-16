@@ -1,0 +1,9 @@
+{
+  "name": "ids706-de-project",
+  "build": { "dockerfile": "Dockerfile", "context": ".." },
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python", "ms-python.vscode-pylance"]
+    }
+  }
+}
