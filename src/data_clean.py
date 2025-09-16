@@ -15,14 +15,32 @@ import pandas as pd
 
 DEFAULT_CSV = "data/raw/Ecommerce_Consumer_Behavior_Analysis_Data.csv"
 
-def clean_purchase_amount(series: pd.Series) -> pd.Series:
-    """Turn '$1,234.50' to 1234.50 (float)"""
-    return (
-        series.astype(str)
-              .str.replace(r"[\$,]", "", regex=True)
-              .replace({"": np.nan})
-              .astype(float)
+def clean_purchase_amount(s: pd.Series) -> pd.Series:
+
+    """
+    Normalize currency-like values to float.
+    Handles: '$', ',', surrounding spaces, empty strings, 'None'/'NaN' strings, (negatives).
+    Returns float dtype with NaN where parsing fails.
+    """
+    if s is None:
+        return pd.Series(dtype="float64")
+
+    # Coerce everything to string for safe text ops
+    t = s.astype(str).str.strip()
+
+    # Map common "missing" string tokens to NA
+    t = t.replace(
+        {"": pd.NA, "None": pd.NA, "none": pd.NA, "NaN": pd.NA, "nan": pd.NA}
     )
+
+    # Remove currency formatting
+    t = t.str.replace(r"[\$,]", "", regex=True)
+
+    # Convert (123.45) to -123.45 if you ever see accounting negatives
+    t = t.str.replace(r"^\((.*)\)$", r"-\1", regex=True)
+
+    # Final numeric coercion (anything invalid -> NaN)
+    return pd.to_numeric(t, errors="coerce")
 
 def parse_purchase_date(series: pd.Series) -> pd.Series:
     """
