@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: ["main"]
 
+# required for the Pages deploy job
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -30,10 +36,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
+
       - name: Install dependencies
         run: |
           python -m pip install -U pip
@@ -59,8 +67,7 @@ jobs:
       - name: Run tests
         run: |
           python -m pytest -q
-    
-    
+
   docker:
     # build & run the container to prove containerization works
     needs: test
@@ -72,10 +79,57 @@ jobs:
       - name: Build image from .devcontainer/Dockerfile
         uses: docker/build-push-action@v5
         with:
-            context: .
-            file: .devcontainer/Dockerfile
-            tags: ids706-de:ci
-            load: true            # makes the image available to `docker run`
+          context: .
+          file: .devcontainer/Dockerfile
+          tags: ids706-de:ci
+          load: true            # makes the image available to `docker run`
 
       - name: Run tests inside the container
         run: docker run --rm ids706-de:ci python -m pytest -q
+
+  # ===== Coverage to GitHub Pages (+ coverage.xml artifact) =====
+  coverage_pages:
+    name: Build coverage for Pages
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+
+      - name: Pytest with HTML & XML coverage
+        run: |
+          python -m pytest --cov=src \
+                           --cov-report=xml:coverage.xml \
+                           --cov-report=html \
+                           --cov-report=term-missing -q
+
+      - name: Upload coverage.xml
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+
+      - name: Upload Pages artifact (htmlcov)
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: htmlcov
+
+  deploy_pages:
+    name: Deploy coverage to Pages
+    needs: coverage_pages
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
