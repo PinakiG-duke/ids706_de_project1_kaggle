@@ -141,6 +141,53 @@ python -m pytest -q src/test_cases.py
 4. .Devcontainer has both the Dockerfile and devcontainer.json and CI job that builds the image and runs tests inside the container
    <img width="938" height="383" alt="image" src="https://github.com/user-attachments/assets/df71418c-f018-4d6b-ac32-e0559ce44cae" />
 
+**Updated Repo Structure**
 
+.
+├─ .devcontainer/
+│  ├─ Dockerfile
+│  └─ devcontainer.json
+├─ .github/workflows/
+│  └─ main.yml
+├─ src/
+│  ├─ data_clean.py      # cleaning & normalized dates/amount
+│  ├─ eda.py             # EDA -> CSV/TXT artifacts
+│  ├─ plot.py            # one histogram
+│  ├─ model.py           # baseline logistic regression
+│  ├─ test_clean.py      # unit tests: cleaning
+│  ├─ test_eda.py        # filtering/grouping + system test (artifacts)
+│  └─ test_model.py      # model happy + error paths
+├─ data/                 # small CSV for reproducibility
+├─ artifacts/            # generated outputs (sample files committed for reference)
+├─ requirements.txt
+└─ README.md
 
+**How to test the project**
+
+python -m venv .venv
+# PowerShell: .\.venv\Scripts\Activate.ps1
+# Git Bash:   . .venv/Scripts/activate
+pip install -r requirements.txt
+
+python -m pytest -q          # run tests
+python -m src.data_clean     # writes processed CSV
+python -m src.eda            # writes CSV/TXT summaries to artifacts/
+python -m src.plot           # writes histogram PNG to artifacts/
+python -m src.model          # writes model_report.txt
+
+**Status on project requirements as stated**
+
+Test Coverage (≥3 tests; unit + system) - Coverage in repo (src/test_clean.py, src/test_eda.py, src/test_model.py)
+
+Test Pass --> Validated on CI jobs, Local test results appended
+
+Containerization (Dev Container or Docker) --> Actions → “docker” job → build + run steps (green) alongwith .devcontainer in the repo
+
+**Synopsis of CI Jobs Running**
+
+test – sets up Python, installs requirements.txt, runs pytest -q.
+
+artifacts – executes src.eda and uploads CSV/PNG/TXT as workflow artifacts.
+
+docker – builds image from .devcontainer/Dockerfile and runs tests inside the container
 
