@@ -8,3 +8,4 @@ jupyter
 numpy
 tabulate
 pytest
+pytest-cov
