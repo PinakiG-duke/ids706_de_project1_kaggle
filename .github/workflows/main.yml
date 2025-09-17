@@ -79,47 +79,44 @@ jobs:
 
       - name: Run tests inside the container
         run: docker run --rm ids706-de:ci python -m pytest -q
-  # (If not already present at top level)
+  
 permissions:
-  contents: read
-  pages: write
-  id-token: write
+    contents: read
+    pages: write
+    id-token: write
 
-jobs:
-  # ... your existing jobs: test, artifacts, docker
+      coverage_pages:
+        name: Build coverage for Pages
+        needs: test                   # wait until tests pass
+        runs-on: ubuntu-latest
 
-  coverage_pages:
-    name: Build coverage for Pages
-    needs: test                   # wait until tests pass
-    runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
 
-    steps:
-      - uses: actions/checkout@v4
+          - uses: actions/setup-python@v5
+            with:
+              python-version: "3.11"
 
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - run: python -m pip install -U pip
-      - run: pip install -r requirements.txt
+          - run: python -m pip install -U pip
+          - run: pip install -r requirements.txt
 
       # Generate HTML coverage
-      - name: Pytest with HTML coverage
-        run: python -m pytest --cov=src --cov-report=html --cov-report=term-missing -q
+        - name: Pytest with HTML coverage
+          run: python -m pytest --cov=src --cov-report=html --cov-report=term-missing -q
 
       # Upload the HTML folder as the Pages artifact
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: htmlcov           # publish htmlcov/ as the site root
+        - name: Upload Pages artifact
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: htmlcov           # publish htmlcov/ as the site root
 
-  deploy_pages:
-    needs: coverage_pages
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
+      deploy_pages:
+        needs: coverage_pages
+        runs-on: ubuntu-latest
+        environment:
+          name: github-pages
+          url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+          - id: deployment
+            uses: actions/deploy-pages@v4
   
