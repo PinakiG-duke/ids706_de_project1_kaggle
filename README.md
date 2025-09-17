@@ -191,3 +191,19 @@ artifacts – executes src.eda and uploads CSV/PNG/TXT as workflow artifacts.
 
 docker – builds image from .devcontainer/Dockerfile and runs tests inside the container
 
+**Generating a html Testing Report for easy visualisation of testcase run results**
+
+Component added to the workflow which generates an interactive test result output report in html
+
+<img width="932" height="392" alt="image" src="https://github.com/user-attachments/assets/fc191ebf-8980-4c05-88fa-f2064b83c54e" />
+
+Post a run the reports are displayed here: 
+https://pinakig-duke.github.io/ids706_de_project1_kaggle/class_index.html
+
+### Live HTML Coverage
+The latest test coverage is deployed via GitHub Pages after each push:
+
+➡️ https://pinakig-duke.github.io/ids706_de_project1_kaggle/
+
+
+
