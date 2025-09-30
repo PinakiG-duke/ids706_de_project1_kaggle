@@ -14,6 +14,7 @@ permissions:
 
 jobs:
   test:
+    name: Runs test cases
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,6 +32,7 @@ jobs:
           pip install -r requirements.txt
 
   artifacts:
+    name: Writes Artifacts
     needs: test
     if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' || github.base_ref == 'main' }}
     runs-on: ubuntu-latest
@@ -70,6 +72,7 @@ jobs:
 
   docker:
     # build & run the container to prove containerization works
+    name: Docker Build & Test
     needs: test
     runs-on: ubuntu-latest
     steps:
