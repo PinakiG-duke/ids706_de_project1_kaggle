@@ -205,5 +205,12 @@ The latest test coverage is deployed via GitHub Pages after each push:
 
 ➡️ https://pinakig-duke.github.io/ids706_de_project1_kaggle/
 
+### Updates for Week5 Mega Assignment submission
+
+Added Github labels for jobs within CI workflow
+
+<img width="689" height="268" alt="image" src="https://github.com/user-attachments/assets/571e6fb5-f86b-4a7f-8d46-224083d80408" />
+
+
 
 
