@@ -2,15 +2,23 @@ name: ci
 
 on:
   push:
-    branches: ["**"]
+    branches:
+      - "**"
   pull_request:
-    branches: ["main"]
+    branches:
+      - main
+  workflow_dispatch:
 
-# required for the Pages deploy job
+# Required for Pages deploy
 permissions:
   contents: read
   pages: write
   id-token: write
+
+# Prevent overlapping runs (esp. Pages deploy) on the same ref
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -31,15 +39,20 @@ jobs:
           python -m pip install -U pip
           pip install -r requirements.txt
 
+      - name: Run unit tests (fast smoke)
+        run: python -m pytest -q
+
   artifacts:
     name: Writes Artifacts
     needs: test
     if: ${{ github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main' || github.base_ref == 'main' }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
@@ -53,31 +66,30 @@ jobs:
         run: |
           test -f "data/raw/Ecommerce_Consumer_Behavior_Analysis_Data.csv" || (echo "Missing data CSV" && exit 1)
 
-      - name: Run EDA / Plot / Model
+      - name: Run EDA / Plot / Model (write to artifacts/)
         run: |
           python -m src.eda
           python -m src.plot
           python -m src.model
 
-      - name: Upload artifacts
+      - name: Upload analysis artifacts
         uses: actions/upload-artifact@v4
         with:
           name: analysis-artifacts
           path: artifacts/**
           if-no-files-found: warn
-
-      - name: Run tests
-        run: |
-          python -m pytest -q
+          overwrite: true
 
   docker:
-    # build & run the container to prove containerization works
     name: Docker Build & Test
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Build image from .devcontainer/Dockerfile
         uses: docker/build-push-action@v5
@@ -85,21 +97,23 @@ jobs:
           context: .
           file: .devcontainer/Dockerfile
           tags: ids706-de:ci
-          load: true            # makes the image available to `docker run`
+          load: true
 
       - name: Run tests inside the container
         run: docker run --rm ids706-de:ci python -m pytest -q
 
-  # ===== Coverage to GitHub Pages (+ coverage.xml artifact) =====
+  # -------- Coverage HTML + XML (for Pages) --------
   coverage_pages:
     name: Build coverage for Pages
     needs: test
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-python@v5
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: "3.11"
           cache: "pip"
@@ -116,74 +130,32 @@ jobs:
                            --cov-report=html \
                            --cov-report=term-missing -q
 
+      # 409-safe: unique name per attempt + overwrite
       - name: Upload coverage.xml
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-xml
+          name: coverage-xml-${{ github.run_id }}-${{ github.run_attempt }}
           path: coverage.xml
+          overwrite: true
 
+      # Upload the htmlcov/ directory as the Pages artifact
       - name: Upload Pages artifact (htmlcov)
         uses: actions/upload-pages-artifact@v3
         with:
           path: htmlcov
 
+  # -------- Deploy the Pages artifact --------
   deploy_pages:
     name: Deploy coverage to Pages
-    needs: coverage_build
-    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
-    runs-on: ubuntu-latest
+    needs: coverage_pages
+    if: github.ref == 'refs/heads/main'
     permissions:
       pages: write
       id-token: write
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    concurrency:
-      group: "pages"
-      cancel-in-progress: true
     steps:
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: htmlcov
       - id: deployment
         uses: actions/deploy-pages@v4
-  
-  # Build coverage for every branch and upload as a normal artifact
-  coverage_build:
-    name: Build coverage (artifact)
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-          cache: "pip"
-
-      - name: Install dependencies
-        run: |
-          python -m pip install -U pip
-          pip install -r requirements.txt
-
-      - name: Pytest with HTML & XML coverage
-        run: |
-          python -m pytest --cov=src \
-                           --cov-report=xml:coverage.xml \
-                           --cov-report=html \
-                           --cov-report=term-missing -q
-
-      - name: Upload coverage.xml (artifact)
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-xml
-          path: coverage.xml
-
-      - name: Upload html coverage (artifact)
-        uses: actions/upload-artifact@v4
-        with:
-          name: html-coverage
-          path: htmlcov
-          if-no-files-found: error
-
