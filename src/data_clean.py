@@ -13,10 +13,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-DEFAULT_CSV = "data/raw/Ecommerce_Consumer_Behavior_Analysis_Data.csv"
+# After (pure refactoring)
+from pathlib import Path
+
+DEFAULT_CSV = Path("data/raw/Ecommerce_Consumer_Behavior_Analysis_Data.csv")
+
 
 def clean_purchase_amount(s: pd.Series) -> pd.Series:
-
     """
     Normalize currency-like values to float.
     Handles: '$', ',', surrounding spaces, empty strings, 'None'/'NaN' strings, (negatives).
@@ -29,9 +32,7 @@ def clean_purchase_amount(s: pd.Series) -> pd.Series:
     t = s.astype(str).str.strip()
 
     # Map common "missing" string tokens to NA
-    t = t.replace(
-        {"": pd.NA, "None": pd.NA, "none": pd.NA, "NaN": pd.NA, "nan": pd.NA}
-    )
+    t = t.replace({"": pd.NA, "None": pd.NA, "none": pd.NA, "NaN": pd.NA, "nan": pd.NA})
 
     # Remove currency formatting
     t = t.str.replace(r"[\$,]", "", regex=True)
@@ -41,6 +42,7 @@ def clean_purchase_amount(s: pd.Series) -> pd.Series:
 
     # Final numeric coercion (anything invalid -> NaN)
     return pd.to_numeric(t, errors="coerce")
+
 
 def parse_purchase_date(series: pd.Series) -> pd.Series:
     """
@@ -53,34 +55,47 @@ def parse_purchase_date(series: pd.Series) -> pd.Series:
     # Normalize separators and whitespace
     s = (
         series.astype(str)
-              .str.strip()
-              .str.replace(r"[-\.]", "/", regex=True)  # '-', '.' -> '/'
+        .str.strip()
+        .str.replace(r"[-\.]", "/", regex=True)  # '-', '.' -> '/'
     )
 
     # Try strict month/day/year with 4-digit year
     dt = pd.to_datetime(s, format="%m/%d/%Y", errors="coerce")
 
-
     return dt
 
 
-def add_date_features(df: pd.DataFrame, date_col: str = "Purchase_Date") -> pd.DataFrame:
+# Refactoring - Rename dt to date_series
+
+
+def add_date_features(
+    df: pd.DataFrame, date_col: str = "Purchase_Date"
+) -> pd.DataFrame:
     """
     Given a datetime64 column, add date-related features.
     Creates: Purchase_Year, Purchase_Month, Purchase_Day, Purchase_DayOfWeek (name).
     """
     if date_col in df.columns:
-        dt = df[date_col]
-        df["Purchase_Year"] = dt.dt.year
-        df["Purchase_Month"] = dt.dt.month
-        df["Purchase_Day"] = dt.dt.day
-        df["Purchase_DayOfWeek"] = dt.dt.day_name()
+        date_series = df[date_col]
+        df["Purchase_Year"] = date_series.dt.year
+        df["Purchase_Month"] = date_series.dt.month
+        df["Purchase_Day"] = date_series.dt.day
+        df["Purchase_DayOfWeek"] = date_series.dt.day_name()
     return df
+
+
+# Extracted helper for saving processed CSV
+def _save_processed(df: pd.DataFrame, out_dir: Path = Path("data/processed")) -> None:
+    out_dir.mkdir(parents=True, exist_ok=True)
+    df.to_csv(out_dir / "ecom_clean.csv", index=False)
+
 
 # --------- main cleaning module ---------
 
-def load_and_clean(csv_path: str | Path | None = None,
-                   save_processed: bool = False) -> pd.DataFrame:
+
+def load_and_clean(
+    csv_path: str | Path | None = None, save_processed: bool = False
+) -> pd.DataFrame:
     """
     Load CSV and add cleaned columns; optionally save processed CSV.
     If csv_path is None, use DEFAULT_CSV.
@@ -89,7 +104,10 @@ def load_and_clean(csv_path: str | Path | None = None,
     if not p.exists():
         raise FileNotFoundError(f"CSV not found: {p.resolve()}")
 
-    df = pd.read_csv(p)
+    # Refactoring - Extract variable
+
+    raw_df = pd.read_csv(p)
+    df = raw_df.copy()
 
     # 1)Clean Purchase_Amount to float
     if "Purchase_Amount" in df.columns:
@@ -102,12 +120,15 @@ def load_and_clean(csv_path: str | Path | None = None,
         df = add_date_features(df, "Purchase_Date")
 
     # 3) Save processed CSV- Also gives a checkpoint for manual inspection
+    # Refactored - Extracted helper for saving processed csv
 
     if save_processed:
-        out_dir = Path("data/processed"); out_dir.mkdir(parents=True, exist_ok=True)
-        df.to_csv(out_dir / "ecom_clean.csv", index=False)
+        _save_processed(df)
+        # out_dir = Path("data/processed"); out_dir.mkdir(parents=True, exist_ok=True)
+        # df.to_csv(out_dir / "ecom_clean.csv", index=False)
 
     return df
+
 
 # Allow running this file directly for a quick check
 if __name__ == "__main__":
