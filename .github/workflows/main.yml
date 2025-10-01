@@ -129,15 +129,61 @@ jobs:
 
   deploy_pages:
     name: Deploy coverage to Pages
-    needs: coverage_pages
-    if: github.ref == 'refs/heads/main'
+    needs: coverage_build
+    if: ${{ github.ref == 'refs/heads/main' && github.event_name != 'pull_request' }}
+    runs-on: ubuntu-latest
     permissions:
       pages: write
       id-token: write
-    runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: "pages"
+      cancel-in-progress: true
     steps:
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: htmlcov
       - id: deployment
         uses: actions/deploy-pages@v4
+  
+  # Build coverage for every branch and upload as a normal artifact
+  coverage_build:
+    name: Build coverage (artifact)
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install -U pip
+          pip install -r requirements.txt
+
+      - name: Pytest with HTML & XML coverage
+        run: |
+          python -m pytest --cov=src \
+                           --cov-report=xml:coverage.xml \
+                           --cov-report=html \
+                           --cov-report=term-missing -q
+
+      - name: Upload coverage.xml (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+
+      - name: Upload html coverage (artifact)
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-coverage
+          path: htmlcov
+          if-no-files-found: error
+
