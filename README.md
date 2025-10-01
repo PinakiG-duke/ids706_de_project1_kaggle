@@ -4,6 +4,27 @@
 # ids706_de_project1_kaggle
 Data Engineering multi-week assignment incorporating data import, data cleansing, exploratory analysis, predictive modelling, visualisation, and evaluation
 
+# Added as part of Mega Assignment Week5 submission
+
+**Business Framing**
+The set of analyses carried out on the small e-commerce data answers:
+  Where do the high-value purchases concentrate (by category)?
+  Do discounts cluster in specific categories or satisfaction buckets?
+  What’s the typical satisfaction of high-value orders (p90+)—are we discounting the right users?
+
+**Goals** 
+
+1. Clean messy currency and mixed date formats into analysis-ready fields.
+2. Produce quick EDA artifacts (head/info/describe, high-value filter stats, category summaries).
+3. Build a tiny baseline model (Logistic Regression) to predict Discount_Used from numeric features.
+4. Make everything reproducible (tests, CI, Docker/devcontainer, coverage, artifacts)
+
+**Summary**
+
+In ~1k rows we built a small, reproducible e-commerce analysis pipeline. 
+The project cleans messy fields, surfaces high-value purchase behavior, and trains a minimal baseline classifier for discounts. 
+Everything is automated (tests, Docker/devcontainer, CI, coverage, artifacts). 
+The repo is intentionally lightweight, but the structure (package modules, tests, CI, Docker) is production-friendly and easy to extend.
 
 **Conceptual Workflow**
 flowchart
