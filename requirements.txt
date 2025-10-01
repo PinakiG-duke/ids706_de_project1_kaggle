@@ -9,3 +9,4 @@ numpy
 tabulate
 pytest
 pytest-cov
+flake8==7.1.1

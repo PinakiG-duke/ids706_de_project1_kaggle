@@ -19,3 +19,9 @@ plot:
 
 clean:
 	rm -rf data/raw/* artifacts/*
+
+format:
+	python -m black src
+
+lint:
+	python -m flake8 src
