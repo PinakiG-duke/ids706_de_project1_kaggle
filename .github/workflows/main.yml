@@ -94,6 +94,7 @@ jobs:
   coverage_pages:
     name: Build coverage for Pages
     needs: test
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -129,6 +130,10 @@ jobs:
   deploy_pages:
     name: Deploy coverage to Pages
     needs: coverage_pages
+    if: github.ref == 'refs/heads/main'
+    permissions:
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     environment:
       name: github-pages
