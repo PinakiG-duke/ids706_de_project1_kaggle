@@ -19,12 +19,14 @@ from .data_clean import load_and_clean, DEFAULT_CSV
 ART = Path("artifacts")
 ART.mkdir(parents=True, exist_ok=True)
 
+
 def ensure_dir(p: Path):
     p.mkdir(parents=True, exist_ok=True)
 
+
 def high_value_filter(df: pd.DataFrame, col: str, q: float = 0.10):
     """Keep rows where col >= q-quantile ( q=0.10 keeps top 90%).
-    This is a placeholder function which can be used to remove outliers from the data """
+    This is a placeholder function which can be used to remove outliers from the data"""
     threshold = float(df[col].quantile(q, interpolation="nearest"))
     return df[df[col] >= threshold], threshold
 
@@ -49,11 +51,13 @@ def summarize_by_category(df: pd.DataFrame) -> pd.DataFrame:
 
     out = (
         df.groupby("Purchase_Category", dropna=False)
-          .agg(n=("Customer_ID", "size"),
-        avg_amount=("Purchase_Amount_clean", "mean"),
-        avg_satisfaction=("Customer_Satisfaction", "mean"),
-        discount_rate=("Discount_Used", "mean"),)
-          .reset_index()
+        .agg(
+            n=("Customer_ID", "size"),
+            avg_amount=("Purchase_Amount_clean", "mean"),
+            avg_satisfaction=("Customer_Satisfaction", "mean"),
+            discount_rate=("Discount_Used", "mean"),
+        )
+        .reset_index()
     )
     return out
 
@@ -88,13 +92,13 @@ def run_eda(csv_path: str | Path = None):
     if "Purchase_Amount_clean" in df.columns:
         high, thr = high_value_filter(df, "Purchase_Amount_clean", q=0.10)
         pd.DataFrame(
-        {
-            "percentile": ["p90"],
-            "threshold_value": [round(thr, 2)],
-            "rows_kept": [len(high)],
-            "rows_total": [len(df)],
-            "kept_share": [round(len(high) / len(df), 4)]
-        }
+            {
+                "percentile": ["p90"],
+                "threshold_value": [round(thr, 2)],
+                "rows_kept": [len(high)],
+                "rows_total": [len(df)],
+                "kept_share": [round(len(high) / len(df), 4)],
+            }
         ).to_csv(ART / "eda_filter_stats.csv", index=False)
 
     # 7) Groupby summary by category (Purchase_Category)
@@ -106,6 +110,7 @@ def run_eda(csv_path: str | Path = None):
 
 if __name__ == "__main__":
     import argparse
+
     ap = argparse.ArgumentParser()
     ap.add_argument("--csv", default=None, help="Path to input CSV")
     args = ap.parse_args()

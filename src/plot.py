@@ -7,11 +7,12 @@ PLOT
 from __future__ import annotations
 from pathlib import Path
 import matplotlib.pyplot as plt
-import numpy as np
 
 from .data_clean import load_and_clean, DEFAULT_CSV
 
-ART = Path("artifacts"); ART.mkdir(parents=True, exist_ok=True)
+ART = Path("artifacts")
+ART.mkdir(parents=True, exist_ok=True)
+
 
 def make_histogram(csv_path: str = DEFAULT_CSV):
     df = load_and_clean(csv_path)
@@ -34,6 +35,7 @@ def make_histogram(csv_path: str = DEFAULT_CSV):
     out = ART / "hist_purchase_amount_plot.png"
     plt.savefig(out, dpi=150)
     print(f"Wrote {out}")
+
 
 if __name__ == "__main__":
     make_histogram()
