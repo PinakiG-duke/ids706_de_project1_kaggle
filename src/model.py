@@ -10,7 +10,6 @@ Simple Logistic Regression Model which takes only numeric or bool attributes to 
 from __future__ import annotations
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
@@ -86,6 +85,8 @@ def run_baseline(csv_path: str = DEFAULT_CSV) -> dict:
 if __name__ == "__main__":
     res = run_baseline()
     if res.get("ok"):
-        print(f"Model OK — accuracy: {res['accuracy']:.3f}, features: {res['n_features']}")
+        print(
+            f"Model OK — accuracy: {res['accuracy']:.3f}, features: {res['n_features']}"
+        )
     else:
         print("Model skipped:", res.get("reason"))
